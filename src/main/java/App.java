@@ -1,12 +1,17 @@
 import Servais.ClientCrudService;
 import Servais.HibernateUtil;
 import Servais.PlanetCrudService;
+import Servais.TicketCrudService;
 import org.flywaydb.core.Flyway;
+
 import java.util.ResourceBundle;
 
 public class App {
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("hibernate");
     private static final String JDBC_URL = "hibernate.connection.url";
+    private static final ClientCrudService clientCrudService = new ClientCrudService();
+    private static final PlanetCrudService planetCrudService = new PlanetCrudService();
+    private static final TicketCrudService ticketCrudService = new TicketCrudService();
 
     public static void main(String[] args) {
         Flyway.configure()
@@ -14,31 +19,30 @@ public class App {
                 .load()
                 .migrate();
 
-        clientCrudServiceCheck();
-        planetCrudServiceCheck();
+        ticketCrudServiceCheck();
+
+        ticketCrudServiceNullCheck();
 
         HibernateUtil.getInstance().close();
     }
 
-    public static void clientCrudServiceCheck() {
-        ClientCrudService clientCrudService =new ClientCrudService();
-        clientCrudService.createClient("New_Client");
-        System.out.println(clientCrudService.getClientById(11));
-        clientCrudService.updateClient(5, "Updated_Client");
-        clientCrudService.deleteClientById(8L);
-        System.out.println("---------------------------------");
-        System.out.println(clientCrudService.getAllClients());
-
+    private static void ticketCrudServiceCheck() {
+        ticketCrudService.createTicket(clientCrudService.getClientById(6),
+                planetCrudService.getPlanetById("PL4"),
+                planetCrudService.getPlanetById("PL5"));
+        System.out.println(ticketCrudService.getTicketById(11));
+        ticketCrudService.updateTicket(clientCrudService.getClientById(7), 11);
+        ticketCrudService.deleteTicket(8);
+        System.out.println(ticketCrudService.getAllTickets());
     }
 
-    public static void planetCrudServiceCheck() {
-        PlanetCrudService planetCrudService = new PlanetCrudService();
-        planetCrudService.createPlanet("NEWPL", "New_Planet");
-        System.out.println(planetCrudService.getPlanetById("PL4"));
-        planetCrudService.updatePlanet("PL1", "Update_Planet");
-        planetCrudService.deletePlanet("PL2");
-        System.out.println("---------------------------------");
-        System.out.println(planetCrudService.getAllPlanets());
+    private static void ticketCrudServiceNullCheck() {
+        ticketCrudService.createTicket(null,
+                planetCrudService.getPlanetById("PL1"),
+                planetCrudService.getPlanetById("PL2"));
 
+        ticketCrudService.createTicket(clientCrudService.getClientById(3),
+                null,
+                planetCrudService.getPlanetById("PL2"));
     }
 }

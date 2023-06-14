@@ -10,6 +10,7 @@ import java.util.List;
 
 public class ClientCrudService {
     private final SessionFactory sessionFactory = HibernateUtil.getInstance().getSessionFactory();
+
     public void createClient(String name) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();

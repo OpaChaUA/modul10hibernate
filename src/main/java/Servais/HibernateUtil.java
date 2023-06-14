@@ -1,8 +1,9 @@
 package Servais;
 
-import lombok.Getter;
 import entity.Client;
 import entity.Planet;
+import entity.Ticket;
+import lombok.Getter;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
@@ -20,6 +21,7 @@ public class HibernateUtil {
         sessionFactory = new Configuration()
                 .addAnnotatedClass(Client.class)
                 .addAnnotatedClass(Planet.class)
+                .addAnnotatedClass(Ticket.class)
                 .buildSessionFactory();
     }
 
@@ -28,6 +30,7 @@ public class HibernateUtil {
     }
 
     public void close() {
+
         sessionFactory.close();
     }
 }
